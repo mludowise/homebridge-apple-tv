@@ -59,10 +59,10 @@ module.exports = ({ device, command, duration, log, name, debug }) => {
   }
   
   if (duration == undefined || duration <= 0) {
-      return sendKeyPressAndRelease(usePage, usage);
+      return device.sendKeyPressAndRelease(usePage, usage);
   }
   
-  return sendKeyPress(usePage, usage, true).then((resolve, reject) => {
-      return sendKeyPress(usePage, usage, false)
+  return device.sendKeyPress(usePage, usage, true).then((resolve, reject) => {
+      return device.sendKeyPress(usePage, usage, false)
   });
 }
