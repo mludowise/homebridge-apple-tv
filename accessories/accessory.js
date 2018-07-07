@@ -36,7 +36,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
     const { debug, device, config, log, name } = this;
 
     if (typeof command === 'string') {
-      sendCommand({ device, command, log, name, debug });
+      sendCommand({ device, command, 0.5, log, name, debug });
 
       return;
     }
@@ -48,7 +48,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
         const currentCommand = command[index];
 
         if (typeof currentCommand === 'string') {
-          sendCommand({ device, command: currentCommand, log, name, debug });
+          sendCommand({ device, command: currentCommand, 0.5, log, name, debug });
         } else {
           await this.performRepeatSend(currentCommand);
 
