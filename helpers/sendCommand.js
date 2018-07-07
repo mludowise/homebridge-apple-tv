@@ -1,4 +1,5 @@
 const { assert } = require('chai')
+const delayForDuration = require('../helpers/delayForDuration');
 
 module.exports = ({ device, command, duration, log, name, debug }) => {
   assert(command, `\x1b[31m[CONFIG ERROR]: \x1b[0m${name} (\x1b[33mcommand\x1b[0m is missing)`);
@@ -76,7 +77,9 @@ module.exports = ({ device, command, duration, log, name, debug }) => {
       return device.sendKeyPressAndRelease(usePage, usage);
   }
   
-  return device.sendKeyPress(usePage, usage, true).then((resolve, reject) => {
+  return device.sendKeyPress(usePage, usage, true).then(() => {
+      return delayForDuration(duration);
+  }).then(() => {
       return device.sendKeyPress(usePage, usage, false)
   });
 }
