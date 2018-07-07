@@ -32,12 +32,11 @@ class AppleTVAccessory extends HomebridgeAccessory {
     }
   }
 
-  async performSend (command) {
+  async performSend (command, hold) {
     const { debug, device, config, log, name } = this;
 
     if (typeof command === 'string') {
-      sendCommand({ device, command, duration: 2, log, name, debug });
-
+      sendCommand({ device, command, duration: hold, log, name, debug });
       return;
     }
 
@@ -48,7 +47,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
         const currentCommand = command[index];
 
         if (typeof currentCommand === 'string') {
-          sendCommand({ device, command: currentCommand, duration: 2, log, name, debug });
+          sendCommand({ device, command: currentCommand, duration: hold, log, name, debug });
         } else {
           await this.performRepeatSend(currentCommand);
 
@@ -64,14 +63,14 @@ class AppleTVAccessory extends HomebridgeAccessory {
 
   async performRepeatSend (parentData) {
     const { host, log, name, debug } = this;
-    let { command, interval, repeat } = parentData;
+    let { command, interval, repeat, hold } = parentData;
 
     repeat = repeat || 1
     if (repeat > 1) interval = interval || 0.5;
 
     // Itterate through each command config in the array
     for (let index = 0; index < repeat; index++) {
-      await this.performSend(command);
+      await this.performSend(command, hold);
 
       if (interval && index < repeat - 1) {
         this.intervalTimeoutPromise = delayForDuration(interval);
