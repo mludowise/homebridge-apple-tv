@@ -43,7 +43,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
       return sendCommand({ device, command, duration: hold, log, name, debug });
     }
 
-    var promise = new Promise();
+    var promise = new Promise({});
     // Iterate through each command config in the array
     for (let index = 0; index < command.length; index++) {
       let pause;
@@ -84,7 +84,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
     repeat = repeat || 1
     if (repeat > 1) interval = interval || 0.5;
 
-    var promise = new Promise();
+    var promise = new Promise({});
     
     // Iterate through each command config in the array
     for (let index = 0; index < repeat; index++) {
