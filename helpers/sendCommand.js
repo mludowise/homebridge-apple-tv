@@ -4,7 +4,7 @@ const delayForDuration = require('../helpers/delayForDuration');
 module.exports = ({ device, command, duration, log, name, debug }) => {
   assert(command, `\x1b[31m[CONFIG ERROR]: \x1b[0m${name} (\x1b[33mcommand\x1b[0m is missing)`);
 
-  log(`${name} sendCommand (\x1b[33m${command}\x1b[0m)`);
+  log(`${name} sendCommand (\x1b[33m${command}\x1b[0m) hold for ${duration}`);
 
   var usePage, usage;
   switch (command) {
