@@ -74,12 +74,16 @@ module.exports = ({ device, command, duration, log, name, debug }) => {
   }
   
   if (duration == undefined || duration <= 0) {
+      log("instant");
       return device.sendKeyPressAndRelease(usePage, usage);
   }
   
+  log("press");
   return device.sendKeyPress(usePage, usage, true).then(() => {
+      log(`hold ${duration}`);
       return delayForDuration(duration);
   }).then(() => {
-      return device.sendKeyPress(usePage, usage, false)
+      log("unpress");
+      return device.sendKeyPress(usePage, usage, false);
   });
 }
