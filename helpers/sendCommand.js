@@ -53,7 +53,7 @@ module.exports = ({ device, command, duration, log, name, debug }) => {
     case "mic":
       usePage = 12;
 	  usage = 0x04;
-    default: {
+    default:
       log(`\x1b[31m[ERROR]: \x1b[0m${name} sendCommand (\x1b[33m${command}\x1b[0m is not a valid command)`);
       return;
     }
