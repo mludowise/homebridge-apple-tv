@@ -31,52 +31,75 @@ class AppleTVAccessory extends HomebridgeAccessory {
       this.pauseTimeoutPromise = null;
     }
   }
-
-  async performSend (command, hold) {
+  
+  performCommand (command) {
+    this.performSend(command).resolve();
+  }
+  
+  performSend (command, hold) {
     const { debug, device, config, log, name } = this;
 
     if (typeof command === 'string') {
-      sendCommand({ device, command, duration: hold, log, name, debug });
-      return;
+      return sendCommand({ device, command, duration: hold, log, name, debug });
     }
 
-    await catchDelayCancelError(async () => {
-      // Itterate through each command config in the array
-      for (let index = 0; index < command.length; index++) {
-        let pause;
-        const currentCommand = command[index];
+    var promise = new Promise();
+    // Iterate through each command config in the array
+    for (let index = 0; index < command.length; index++) {
+      let pause;
+      const currentCommand = command[index];
+      let promise;
 
-        if (typeof currentCommand === 'string') {
-          sendCommand({ device, command: currentCommand, duration: hold, log, name, debug });
-        } else {
-          await this.performRepeatSend(currentCommand);
-
-          pause = currentCommand.pause;
-        }
-
-        if (!pause) pause = 0.5;
-        this.pauseTimeoutPromise = delayForDuration(pause);
-        await this.pauseTimeoutPromise;
+      if (typeof currentCommand === 'string') {
+        promise = promise.then(() => {
+          return sendCommand({ device, command: currentCommand, duration: hold, log, name, debug });  
+        });
+      } else {
+        promise = promise.then(() => {
+          return this.performRepeatSend(currentCommand);
+        });
+        
+        pause = currentCommand.pause;
       }
-    });
+        
+      // Don't add a delay to the last command
+      if (index == command.length - 1) {
+        continue;
+      }
+      
+      if (!pause) pause = 0.5;
+          
+      promise = promise.then(() => {
+        return delayForDuration(pause);
+      });
+    }
+    
+    return promise;
   }
 
-  async performRepeatSend (parentData) {
+  performRepeatSend (parentData) {
     const { host, log, name, debug } = this;
     let { command, interval, repeat, hold } = parentData;
 
     repeat = repeat || 1
     if (repeat > 1) interval = interval || 0.5;
 
-    // Itterate through each command config in the array
+    var promise = new Promise();
+    
+    // Iterate through each command config in the array
     for (let index = 0; index < repeat; index++) {
-      await this.performSend(command, hold);
+      promise = promise.then(() => {
+        this.performSend(command, hold);
+      });
 
       if (interval && index < repeat - 1) {
-        this.intervalTimeoutPromise = delayForDuration(interval);
-        await this.intervalTimeoutPromise;
+        promise = promise.then(() => {
+          return delayForDuration(interval);
+        });
       }
     }
+    
+    return promise;
   }
 }
 
