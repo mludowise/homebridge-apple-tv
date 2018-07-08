@@ -50,10 +50,12 @@ class AppleTVAccessory extends HomebridgeAccessory {
       
       if (typeof currentCommand === 'string') {
         promise = promise.then(() => {
+            log(`perform command ${currentCommand}`)
           return sendCommand({ device, command: currentCommand, duration: hold, log, name, debug });  
         });
       } else {
         promise = promise.then(() => {
+            log("perform repeat")
           return that.performRepeatSend(currentCommand);
         });
         
@@ -65,6 +67,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
       // Add a pause if this isn't the last command
       if (index < command.length - 1) {
         promise = promise.then(() => {
+          log(`pause ${pause}`)
           return delayForDuration(pause);
         });
       }      
@@ -82,7 +85,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
 
     var promise =  Promise.resolve();
     
-    // Iterate through each command config in the array
+    // Iterate through each repeated command
     for (let index = 0; index < repeat; index++) {
       promise = promise.then(() => {
         this.performSend(command, hold);
@@ -90,6 +93,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
 
       if (interval && index < repeat - 1) {
         promise = promise.then(() => {
+          log(`pause ${interval}`)
           return delayForDuration(interval);
         });
       }
