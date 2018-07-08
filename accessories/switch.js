@@ -75,7 +75,7 @@ class SwitchAccessory extends AppleTVAccessory {
   async setSwitchState (command) {
     this.reset();
 
-    if (command) await this.performCommand(command);
+    if (command) await this.performSend(command);
 
     this.checkAutoOnOff();
   }

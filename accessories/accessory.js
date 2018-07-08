@@ -32,10 +32,6 @@ class AppleTVAccessory extends HomebridgeAccessory {
     }
   }
   
-  performCommand (command) {
-    this.performSend(command).resolve();
-  }
-  
   performSend (command, hold) {
     const { debug, device, config, log, name } = this;
 
