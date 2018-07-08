@@ -43,39 +43,36 @@ class AppleTVAccessory extends HomebridgeAccessory {
       return sendCommand({ device, command, duration: hold, log, name, debug });
     }
 
-    var promise = new Promise((resolve, reject) => { return resolve() });
+    var promise =  Promise.resolve({ return true });
     
     // Iterate through each command config in the array
-    for (let index = 0; index < command.length; index++) {
-      let pause;
-      const currentCommand = command[index];
-      let promise;
-
+    return command.reduce(function(promise, currentCommand, index) {
+      let pause = 0.5;
+      let promiseChain;
+      
       if (typeof currentCommand === 'string') {
-        promise = promise.then(() => {
+        promiseChain = promise.then(() => {
           return sendCommand({ device, command: currentCommand, duration: hold, log, name, debug });  
         });
       } else {
-        promise = promise.then(() => {
+        promiseChain = promise.then(() => {
           return this.performRepeatSend(currentCommand);
         });
         
-        pause = currentCommand.pause;
-      }
-        
-      // Don't add a delay to the last command
-      if (index == command.length - 1) {
-        continue;
+        if (currentCommand.pause) {
+          pause = currentCommand.pause;
+        }
       }
       
-      if (!pause) pause = 0.5;
-          
-      promise = promise.then(() => {
-        return delayForDuration(pause);
-      });
-    }
-    
-    return promise;
+      // Add a pause if this isn't the last command
+      if (index < command.length - 1) {
+        promiseChain = promiseChain.then(() => {
+          return this.performRepeatSend(currentCommand);
+        });
+      }
+      
+      return promiseChain;
+    }, Promise.resolve());
   }
 
   performRepeatSend (parentData) {
@@ -85,7 +82,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
     repeat = repeat || 1
     if (repeat > 1) interval = interval || 0.5;
 
-    var promise = new Promise((resolve, reject) => { return resolve() });
+    var promise =  Promise.resolve();
     
     // Iterate through each command config in the array
     for (let index = 0; index < repeat; index++) {
