@@ -88,6 +88,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
     // Iterate through each repeated command
     for (let index = 0; index < repeat; index++) {
       promise = promise.then(() => {
+          log(`perform send ${command}`);
         this.performSend(command, hold);
       });
 
