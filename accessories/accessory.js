@@ -63,7 +63,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
       // Add a pause if this isn't the last command
       if (index < command.length - 1) {
         promiseChain = promiseChain.then(() => {
-          return that.performRepeatSend(currentCommand);
+          return delayForDuration(pause);
         });
       }
       
