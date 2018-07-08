@@ -45,6 +45,7 @@ class AppleTVAccessory extends HomebridgeAccessory {
     
     // Iterate through each command config in the array
     for (let index = 0; index < command.length; index++) {
+      const currentCommand = command[index];
       let pause = 0.5;
       
       if (typeof currentCommand === 'string') {
